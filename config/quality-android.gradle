@@ -1,0 +1,55 @@
+apply plugin: 'checkstyle'
+apply plugin: 'findbugs'
+
+checkstyle {
+    // will fire "java.lang.ClassNotFoundException: com.puppycrawl.tools.checkstyle
+    // .CheckStyleTask" with version 6.10.1
+    toolVersion '6.5'
+
+    configFile file('../config/quality/checkstyle/checkstyle.xml')
+
+    configProperties.checkstyleSuppressionFilterPath = file(
+            "${project.rootDir}/config/quality/checkstyle/suppressions.xml")
+            .absolutePath
+}
+
+task checkstyle(type: Checkstyle, group: 'verification') {
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+    exclude '**/R.java'
+    exclude '**/BuildConfig.java'
+
+    def configProps = ['proj.module.dir': projectDir.absolutePath]
+    configProperties configProps
+
+    // empty classpath
+    classpath = files()
+}
+
+findbugs {
+    toolVersion = "3.0.1"
+    ignoreFailures = false
+    effort = "max"
+    reportLevel = "high"
+    excludeFilter file('../config/quality/findbugs/findbugs-filter.xml')
+}
+task findbugs(type: FindBugs, group: 'verification') {
+    classes = files("${project.rootDir}/${project.getName()}/build/intermediates/classes")
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        xml {
+            destination "${project.rootDir}/${project.getName()}/build/reports/findbugs/findbugs.xml"
+        }
+        html {
+            destination "${project.rootDir}/${project.getName()}/build/reports/findbugs/findbugs.html"
+        }
+    }
+    classpath = files()
+}
+

@@ -1,0 +1,24 @@
+group 'com.github.promeg'
+version '1.0-SNAPSHOT'
+
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.1'
+        classpath 'com.github.dcendents:android-maven-plugin:1.2'
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+ext {
+    groupName = 'com.github.promeg'
+    releaseVersion = "1.0.0"
+}
