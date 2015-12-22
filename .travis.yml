@@ -1,0 +1,13 @@
+language: android
+android:
+  components:
+    - build-tools-22.0.1
+    - android-22
+
+before_script:
+  - chmod +x gradlew
+
+script:
+  - echo "Travis branch is $TRAVIS_BRANCH"
+  - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
+  - ./gradlew :lib:test
