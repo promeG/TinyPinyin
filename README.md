@@ -1,4 +1,8 @@
 # TinyPinyin
+[ ![Download](https://api.bintray.com/packages/promeg/maven/tinypinyin/images/download.svg) ](https://bintray.com/promeg/maven/tinypinyin/_latestVersion)
+[![Build Status](https://travis-ci.org/promeG/TinyPinyin.svg?branch=master)](https://travis-ci.org/promeG/TinyPinyin)
+
+
 适用于Java和Android的快速、低内存占用的汉字转拼音库。
 
 ## 特性
