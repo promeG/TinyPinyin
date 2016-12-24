@@ -1,2 +1,3 @@
+include ':tinypinyin-lexicons-android-cncity', ':tinypinyin-lexicons-java-cncity'
 rootProject.name = 'tinypinyin'
 include 'lib'

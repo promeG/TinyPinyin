@@ -7,8 +7,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.1'
-        classpath 'com.github.dcendents:android-maven-plugin:1.2'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.1'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
     }
 }
 
@@ -20,5 +20,13 @@ allprojects {
 
 ext {
     groupName = 'com.github.promeg'
-    releaseVersion = "1.0.0"
+    releaseVersionName = "1.0.0"
+    releaseVersionCode = 2
+
+    // Android
+    androidBuildToolsVersion = '24.0.3'
+    androidMinSdkVersion = 16
+    androidTargetSdkVersion = 24
+    androidCompileSdkVersion = 24
+    androidSupportSdkVersion = '24.2.1'
 }

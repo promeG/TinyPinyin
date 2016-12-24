@@ -1,12 +1,26 @@
 package com.github.promeg.pinyinhelper;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by guyacong on 2015/9/28.
  */
 public final class Pinyin {
 
-    private Pinyin() {
-        //no instance
+    final List<PinyinDict> mPinyinDicts;
+
+    private Pinyin(List<PinyinDict> pinyinDicts) {
+        mPinyinDicts = Collections.unmodifiableList(pinyinDicts);
+    }
+
+    public static Builder with(PinyinDict dict) {
+        return new Builder(dict);
+    }
+
+    public String toPinyin(String str, String separator) {
+        return Engine.toPinyin(str, mPinyinDicts, separator);
     }
 
     /**
@@ -58,5 +72,28 @@ public final class Pinyin {
             realIndex = (short) (realIndex | PinyinData.PADDING_MASK);
         }
         return realIndex;
+    }
+
+    public static final class Builder {
+
+        List<PinyinDict> mPinyinDicts = null;
+
+        private Builder(PinyinDict dict) {
+            mPinyinDicts = new ArrayList<PinyinDict>();
+            if (dict != null) {
+                mPinyinDicts.add(dict);
+            }
+        }
+
+        public Builder with(PinyinDict dict) {
+            if (dict != null) {
+                mPinyinDicts.add(dict);
+            }
+            return this;
+        }
+
+        public Pinyin build() {
+            return new Pinyin(mPinyinDicts);
+        }
     }
 }

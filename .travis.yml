@@ -10,4 +10,4 @@ before_script:
 script:
   - echo "Travis branch is $TRAVIS_BRANCH"
   - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
-  - ./gradlew :lib:test
+  - ./gradlew :lib:test :tinypinyin-lexicons-android-cncity:test
