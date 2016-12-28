@@ -14,6 +14,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -25,7 +26,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
  */
 public class PinyinTest {
 
-    //@Test
+    @Test
     public void testIsChinese() throws BadHanyuPinyinOutputFormatCombination {
         char[] allChars = allChars();
         final int allCharsLength = allChars.length;
@@ -47,7 +48,7 @@ public class PinyinTest {
         }
     }
 
-    //@Test
+    @Test
     public void testToPinyin_char() throws BadHanyuPinyinOutputFormatCombination {
         char[] allChars = allChars();
         final int allCharsLength = allChars.length;
@@ -77,15 +78,15 @@ public class PinyinTest {
         assertThat(chineseCount, is(expectedChineseCount));
     }
 
-    //@Test
+    @Test
     public void testInit_no_dict() {
         Pinyin pinyin = Pinyin.with(null).build();
 
-        assertThat(pinyin.mPinyinDicts.size(), is(0));
+        assertThat(pinyin.mTrieDict, nullValue());
     }
 
-    //@Test
-    public void testInit_with_dict() {
+    @Test
+    public void testInit_with_null_dict() {
         Pinyin pinyin = Pinyin.with(new PinyinDict() {
                 @Override
                 public Map<String, String[]> mapping() {
@@ -98,11 +99,80 @@ public class PinyinTest {
                 }
             }).build();
 
-        assertThat(pinyin.mPinyinDicts.size(), is(2));
+        assertThat(pinyin.mTrieDict, nullValue());
+    }
+
+    @Test
+    public void testInit_with_nonnull_nokey_dict() {
+        Pinyin pinyin = Pinyin.with(new PinyinDict() {
+                @Override
+                public Map<String, String[]> mapping() {
+                    return new HashMap<String, String[]>();
+                }
+            }).build();
+
+        assertThat(pinyin.mTrieDict, nullValue());
+    }
+
+    @Test
+    public void testInit_with_nonnull_haskey_dict() {
+        Pinyin pinyin = Pinyin.with(new PinyinDict() {
+                @Override
+                public Map<String, String[]> mapping() {
+                    Map<String, String[]> map = new HashMap<String, String[]>();
+                    map.put("1", new String[]{});
+                    return map;
+                }
+            }).build();
+
+        assertThat(pinyin.mTrieDict.size(), is(1));
+    }
+
+    @Test
+    public void testInit_with_multi_haskey_dict() {
+        Pinyin pinyin = Pinyin.with(new PinyinDict() {
+                @Override
+                public Map<String, String[]> mapping() {
+                    Map<String, String[]> map = new HashMap<String, String[]>();
+                    map.put("1", new String[]{});
+                    return map;
+                }
+            }).with(new PinyinDict() {
+                @Override
+                public Map<String, String[]> mapping() {
+                    Map<String, String[]> map = new HashMap<String, String[]>();
+                    map.put("2", new String[]{});
+                    return map;
+                }
+            }).build();
+
+        assertThat(pinyin.mTrieDict.size(), is(2));
+    }
+
+    @Test
+    public void testInit_with_multi_hasduplicatekey_dict() {
+        Pinyin pinyin = Pinyin.with(new PinyinDict() {
+                @Override
+                public Map<String, String[]> mapping() {
+                    Map<String, String[]> map = new HashMap<String, String[]>();
+                    map.put("1", new String[]{"Hello"});
+                    return map;
+                }
+            }).with(new PinyinDict() {
+                @Override
+                public Map<String, String[]> mapping() {
+                    Map<String, String[]> map = new HashMap<String, String[]>();
+                    map.put("1", new String[]{"world"});
+                    return map;
+                }
+            }).build();
+
+        assertThat(pinyin.mTrieDict.size(), is(1));
+        assertThat(pinyin.mTrieDict.get("1")[0], is("Hello")); // first one in wins
     }
 
 
-    //@Test
+    @Test
     public void testToPinyin_Str_no_dict() {
         Pinyin pinyin = Pinyin.with(null).build();
 
@@ -113,7 +183,7 @@ public class PinyinTest {
 
     }
 
-    //@Test
+    @Test
     public void testToPinyin_Str_empty_dict() {
         Pinyin pinyin = Pinyin.with(new PinyinDict() {
                 @Override
@@ -129,8 +199,9 @@ public class PinyinTest {
 
     }
 
-    //@Test
+    @Test
     public void testToPinyin_Str_one_dict() {
+
         Pinyin pinyin = Pinyin.with(new PinyinDict() {
                 @Override
                 public Map<String, String[]> mapping() {
@@ -146,7 +217,7 @@ public class PinyinTest {
         assertThat(pinyin.toPinyin(str, " "), is(expected));
     }
 
-    //@Test
+    @Test
     public void testToPinyin_Str_multi_dict() {
         Pinyin pinyin = Pinyin.with(new PinyinDict() {
                 @Override

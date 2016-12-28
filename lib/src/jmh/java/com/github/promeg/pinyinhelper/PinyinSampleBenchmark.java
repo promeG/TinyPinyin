@@ -1,7 +1,6 @@
 package com.github.promeg.pinyinhelper;
 
 
-import org.openjdk.jmh.annotations.Benchmark;
 import net.sourceforge.pinyin4j.PinyinHelper;
 
 import java.util.Random;
@@ -9,24 +8,25 @@ import java.util.Random;
 /**
  * Created by guyacong on 2015/9/28.
  */
+//CHECKSTYLE:OFF
 public class PinyinSampleBenchmark {
 
-    @Benchmark
+    //@Benchmark
     public void measureMyIsChinese() {
         Pinyin.isChinese(genRandomChar());
     }
 
-    @Benchmark
+    //@Benchmark
     public void measurePinyin4jIsChinese() {
         isChinesePinyin4j(genRandomChar());
     }
 
-    @Benchmark
+    //@Benchmark
     public void measureMyToPinyin() {
         Pinyin.toPinyin(genRandomChar());
     }
 
-    @Benchmark
+    //@Benchmark
     public void measurePinyin4jToPinyin() {
         PinyinHelper.toHanyuPinyinStringArray(genRandomChar());
     }
@@ -45,3 +45,4 @@ public class PinyinSampleBenchmark {
         return (char) (Character.MIN_VALUE + random.nextInt(Character.MAX_VALUE - Character.MIN_VALUE));
     }
 }
+//CHECKSTYLE:ON

@@ -17,10 +17,11 @@ import java.util.Random;
 /**
  * Created by guyacong on 2016/12/23.
  */
-
+//CHECKSTYLE:OFF
 public class PinyinDictBenchmark {
     static Random random = new Random();
     static HanyuPinyinOutputFormat format;
+    static Pinyin pinyin = Pinyin.with(CnCityDict.getInstance()).build();
 
     static {
         format = new HanyuPinyinOutputFormat();
@@ -36,7 +37,7 @@ public class PinyinDictBenchmark {
 
     @Benchmark
     public void measureMy_toPinyin_one_dict() {
-        Pinyin.with(CnCityDict.getInstance()).build().toPinyin(genRandomString(), ",");
+        pinyin.toPinyin(genRandomString(), ",");
     }
 
 
@@ -101,3 +102,4 @@ public class PinyinDictBenchmark {
     }
 
 }
+//CHECKSTYLE:ON

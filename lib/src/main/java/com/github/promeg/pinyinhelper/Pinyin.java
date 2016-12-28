@@ -1,7 +1,8 @@
 package com.github.promeg.pinyinhelper;
 
+import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -9,10 +10,12 @@ import java.util.List;
  */
 public final class Pinyin {
 
-    final List<PinyinDict> mPinyinDicts;
+    final AhoCorasickDoubleArrayTrie<String[]> mTrieDict;
+    final SegmentationSelector mSelector;
 
-    private Pinyin(List<PinyinDict> pinyinDicts) {
-        mPinyinDicts = Collections.unmodifiableList(pinyinDicts);
+    private Pinyin(List<PinyinDict> pinyinDicts, SegmentationSelector selector) {
+        mTrieDict = Utils.dictsToTrie(pinyinDicts);
+        mSelector = selector;
     }
 
     public static Builder with(PinyinDict dict) {
@@ -20,7 +23,7 @@ public final class Pinyin {
     }
 
     public String toPinyin(String str, String separator) {
-        return Engine.toPinyin(str, mPinyinDicts, separator);
+        return Engine.toPinyin(str, mTrieDict, separator, mSelector);
     }
 
     /**
@@ -76,6 +79,8 @@ public final class Pinyin {
 
     public static final class Builder {
 
+        SegmentationSelector mSelector = null;
+
         List<PinyinDict> mPinyinDicts = null;
 
         private Builder(PinyinDict dict) {
@@ -92,8 +97,17 @@ public final class Pinyin {
             return this;
         }
 
+        // 暂不公开此API
+        /*public*/ Builder selector(SegmentationSelector selector) {
+            if (selector != null) {
+                mSelector = selector;
+            }
+            return this;
+        }
+
         public Pinyin build() {
-            return new Pinyin(mPinyinDicts);
+            // mSelector为null时，默认使用ForwardLongestSelector
+            return new Pinyin(mPinyinDicts, mSelector == null ? new ForwardLongestSelector() : mSelector);
         }
     }
 }
