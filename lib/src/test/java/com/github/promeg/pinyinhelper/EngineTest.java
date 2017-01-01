@@ -80,7 +80,7 @@ public class EngineTest {
                 return map;
             }
         });
-        String result = Engine.toPinyin("重庆和长安都很棒!", dictsToTrie(mPinyinDicts),mPinyinDicts,  ",", new ForwardLongestSelector());
+        String result = Engine.toPinyin("重庆和长安都很棒!", dictsToTrie(mPinyinDicts), mPinyinDicts,  ",", new ForwardLongestSelector());
 
         String expect = "CHONG,QING,HE,CHANG,AN,DOU,HEN,BANG,!";
         assertThat(expect, is(result));

@@ -10,14 +10,14 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * 正向最大匹配
+ * 正向最大匹配选择器
  *
  * Created by guyacong on 2016/12/28.
  */
 
 final class ForwardLongestSelector implements SegmentationSelector {
 
-    static final Engine.HitComparator HIT_COMPARATOR = new Engine.HitComparator();
+    static final Engine.EmitComparator HIT_COMPARATOR = new Engine.EmitComparator();
 
     @Override
     public List<Emit> select(final Collection<Emit> emits) {

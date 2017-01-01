@@ -9,12 +9,14 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
+ * 字符串转拼音引擎，支持字典和{@link SegmentationSelector}
+ *
  * Created by guyacong on 2016/12/23.
  */
 
 final class Engine {
 
-    static final HitComparator HIT_COMPARATOR = new HitComparator();
+    static final EmitComparator EMIT_COMPARATOR = new EmitComparator();
 
     private Engine() {
         //no instance
@@ -22,6 +24,10 @@ final class Engine {
 
     static String toPinyin(final String inputStr, final Trie trie, final  List<PinyinDict> pinyinDictList,
             final String separator, final SegmentationSelector selector) {
+        if (inputStr == null || inputStr.length() == 0) {
+            return inputStr;
+        }
+
 
         if (trie == null || selector == null) {
             // 没有提供字典或选择器，按单字符转换输出
@@ -37,7 +43,7 @@ final class Engine {
 
         List<Emit> selectedEmits = selector.select(trie.parseText(inputStr));
 
-        Collections.sort(selectedEmits, HIT_COMPARATOR);
+        Collections.sort(selectedEmits, EMIT_COMPARATOR);
 
         StringBuffer resultPinyinStrBuf = new StringBuffer();
 
@@ -83,7 +89,7 @@ final class Engine {
         throw new IllegalArgumentException("No pinyin dict contains word: " + wordInDict);
     }
 
-    static final class HitComparator implements Comparator<Emit> {
+    static final class EmitComparator implements Comparator<Emit> {
 
         @Override
         public int compare(Emit o1, Emit o2) {

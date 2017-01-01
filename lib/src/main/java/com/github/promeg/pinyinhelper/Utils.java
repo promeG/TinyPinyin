@@ -22,8 +22,7 @@ final class Utils {
         Trie.TrieBuilder builder = Trie.builder();
 
         if (pinyinDicts != null) {
-            for (int i = pinyinDicts.size() - 1; i >= 0; i--) {
-                PinyinDict dict = pinyinDicts.get(i);
+            for (PinyinDict dict : pinyinDicts) {
                 if (dict != null && dict.words() != null) {
                     all.addAll(dict.words());
                 }

@@ -21,7 +21,6 @@ import java.util.Random;
 public class PinyinDictBenchmark {
     static Random random = new Random();
     static HanyuPinyinOutputFormat format;
-    static Pinyin pinyin = Pinyin.with(CnCityDict.getInstance()).build();
 
     static {
         format = new HanyuPinyinOutputFormat();
@@ -32,17 +31,17 @@ public class PinyinDictBenchmark {
 
     @Benchmark
     public void measureMy_toPinyin_no_dict() {
-        Pinyin.with(null).build().toPinyin(genRandomString(), ",");
+        Pinyin.toPinyin(genRandomString(), ",");
     }
 
     @Benchmark
     public void measureMy_pinyin_init() {
-        Pinyin.with(CnCityDict.getInstance()).build();
+        Pinyin.init(Pinyin.newConfig().with(CnCityDict.getInstance()));
     }
 
     @Benchmark
     public void measureMy_toPinyin_one_dict() {
-        pinyin.toPinyin(genRandomString(), ",");
+        Pinyin.toPinyin(genRandomString(), ",");
     }
 
 
@@ -53,7 +52,8 @@ public class PinyinDictBenchmark {
 
     @Benchmark
     public void measureMy_toPinyin_with_dict() {
-        Pinyin.with(null).build().toPinyin(genRandomString(), ",");
+        Pinyin.init(Pinyin.newConfig().with(null));
+        Pinyin.toPinyin(genRandomString(), ",");
     }
 
 
