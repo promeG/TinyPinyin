@@ -1,10 +1,13 @@
 package com.github.promeg.pinyinhelper;
 
-import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
+import org.ahocorasick.trie.Emit;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 正向最大匹配
@@ -12,30 +15,33 @@ import java.util.List;
  * Created by guyacong on 2016/12/28.
  */
 
-final class ForwardLongestSelector implements SegmentationSelector<String[]> {
+final class ForwardLongestSelector implements SegmentationSelector {
 
     static final Engine.HitComparator HIT_COMPARATOR = new Engine.HitComparator();
 
     @Override
-    public List<AhoCorasickDoubleArrayTrie<String[]>.Hit<String[]>> select(
-            final List<AhoCorasickDoubleArrayTrie<String[]>.Hit<String[]>> hits) {
-        if (hits == null) {
-            return hits;
+    public List<Emit> select(final Collection<Emit> emits) {
+        if (emits == null) {
+            return null;
         }
 
-        List<AhoCorasickDoubleArrayTrie<String[]>.Hit<String[]>> results = new ArrayList<AhoCorasickDoubleArrayTrie<java.lang.String[]>.Hit<String[]>>(hits);
+        List<Emit> results = new ArrayList<Emit>(emits);
 
-        Collections.sort(hits, HIT_COMPARATOR);
+        Collections.sort(results, HIT_COMPARATOR);
 
         int endValueToRemove = -1;
 
-        for (AhoCorasickDoubleArrayTrie.Hit hit : hits) {
-            if (hit.begin > endValueToRemove && hit.end > endValueToRemove) {
-                endValueToRemove = hit.end;
+        Set<Emit> emitToRemove = new TreeSet<Emit>();
+
+        for (Emit emit : results) {
+            if (emit.getStart() > endValueToRemove && emit.getEnd() > endValueToRemove) {
+                endValueToRemove = emit.getEnd();
             } else {
-                results.remove(hit);
+                emitToRemove.add(emit);
             }
         }
+
+        results.removeAll(emitToRemove);
 
         return results;
     }

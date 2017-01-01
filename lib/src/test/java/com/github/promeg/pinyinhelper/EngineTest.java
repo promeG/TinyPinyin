@@ -26,7 +26,7 @@ public class EngineTest {
 
     @Test
     public void toPinyin_withOneDict() throws Exception {
-        mPinyinDicts.add(new PinyinDict() {
+        mPinyinDicts.add(new PinyinMapDict() {
             @Override
             public Map<String, String[]> mapping() {
                 Map<String, String[]> map = new HashMap<String, String[]>();
@@ -36,7 +36,7 @@ public class EngineTest {
                 return map;
             }
         });
-        String result = Engine.toPinyin("重庆和长安都很棒!四川", dictsToTrie(mPinyinDicts), ",", new ForwardLongestSelector());
+        String result = Engine.toPinyin("重庆和长安都很棒!四川", dictsToTrie(mPinyinDicts), mPinyinDicts, ",", new ForwardLongestSelector());
 
         String expect = "CHONG,QING,HE,CHANG,AN,DOU,HEN,BANG,!,SI,CHUAN";
         assertThat(expect, is(result));
@@ -45,7 +45,7 @@ public class EngineTest {
     @Test
     public void toPinyin_withZeroDict() throws Exception {
         mPinyinDicts.clear();
-        String result = Engine.toPinyin("重庆和长安都很棒!", dictsToTrie(mPinyinDicts), ",", new ForwardLongestSelector());
+        String result = Engine.toPinyin("重庆和长安都很棒!", dictsToTrie(mPinyinDicts), mPinyinDicts, ",", new ForwardLongestSelector());
 
         String expect = "ZHONG,QING,HE,ZHANG,AN,DOU,HEN,BANG,!";
         assertThat(expect, is(result));
@@ -53,7 +53,7 @@ public class EngineTest {
 
     @Test
     public void toPinyin_withNullDict() throws Exception {
-        String result = Engine.toPinyin("重庆和长安都很棒!", null, ",", new ForwardLongestSelector());
+        String result = Engine.toPinyin("重庆和长安都很棒!", null, null, ",", new ForwardLongestSelector());
 
         String expect = "ZHONG,QING,HE,ZHANG,AN,DOU,HEN,BANG,!";
         assertThat(expect, is(result));
@@ -62,7 +62,7 @@ public class EngineTest {
     @Test
     public void toPinyin_withMultiDict() throws Exception {
         // First one wins，按照顺序匹配
-        mPinyinDicts.add(new PinyinDict() {
+        mPinyinDicts.add(new PinyinMapDict() {
             @Override
             public Map<String, String[]> mapping() {
                 Map<String, String[]> map = new HashMap<String, String[]>();
@@ -71,7 +71,7 @@ public class EngineTest {
             }
         });
 
-        mPinyinDicts.add(new PinyinDict() {
+        mPinyinDicts.add(new PinyinMapDict() {
             @Override
             public Map<String, String[]> mapping() {
                 Map<String, String[]> map = new HashMap<String, String[]>();
@@ -80,7 +80,7 @@ public class EngineTest {
                 return map;
             }
         });
-        String result = Engine.toPinyin("重庆和长安都很棒!", dictsToTrie(mPinyinDicts), ",", new ForwardLongestSelector());
+        String result = Engine.toPinyin("重庆和长安都很棒!", dictsToTrie(mPinyinDicts),mPinyinDicts,  ",", new ForwardLongestSelector());
 
         String expect = "CHONG,QING,HE,CHANG,AN,DOU,HEN,BANG,!";
         assertThat(expect, is(result));

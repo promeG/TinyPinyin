@@ -20,8 +20,8 @@ allprojects {
 
 ext {
     groupName = 'com.github.promeg'
-    releaseVersionName = "1.0.0"
-    releaseVersionCode = 2
+    releaseVersionName = "2.0.0-alpha"
+    releaseVersionCode = 3
 
     // Android
     androidBuildToolsVersion = '24.0.3'

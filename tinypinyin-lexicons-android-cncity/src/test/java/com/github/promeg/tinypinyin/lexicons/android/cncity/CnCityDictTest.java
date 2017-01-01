@@ -1,5 +1,7 @@
 package com.github.promeg.tinypinyin.lexicons.android.cncity;
 
+import com.github.promeg.pinyinhelper.Pinyin;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +32,7 @@ public class CnCityDictTest {
         Set<String> words = mDict.mapping().keySet();
 
         assertThat(words.contains(null), is(false));
-        assertThat(words.size(), is(2594));
+        assertThat(words.size(), is(98));
     }
 
     @Test
@@ -42,4 +44,35 @@ public class CnCityDictTest {
             assertThat(word.length(), is(pinyins.length));
         }
     }
+
+    @Test
+    public void toPinyin_test_not_same_with_PinyinOrigin() throws Exception {
+        Set<String> words = mDict.mapping().keySet();
+        for (String word : words) {
+
+            String[] originPinyins = new String[word.length()];
+
+
+            for (int i = 0; i < word.length(); i++) {
+                originPinyins[i] = Pinyin.toPinyin(word.charAt(i));
+            }
+
+
+            String[] pinyins = mDict.mapping().get(word);
+
+
+            boolean hasDifferent = false;
+
+            for (int i = 0; i < word.length(); i++) {
+                if (!originPinyins[i].equalsIgnoreCase(pinyins[i])) {
+                    hasDifferent = true;
+                    break;
+                }
+            }
+
+            assertThat(hasDifferent, is(true));
+        }
+    }
+
+
 }

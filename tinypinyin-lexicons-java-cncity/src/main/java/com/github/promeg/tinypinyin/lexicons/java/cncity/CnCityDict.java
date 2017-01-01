@@ -1,6 +1,6 @@
 package com.github.promeg.tinypinyin.lexicons.java.cncity;
 
-import com.github.promeg.pinyinhelper.PinyinDict;
+import com.github.promeg.pinyinhelper.PinyinMapDict;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Created by guyacong on 2016/12/23.
  */
-public final class CnCityDict implements PinyinDict {
+public final class CnCityDict extends PinyinMapDict {
 
     static volatile CnCityDict singleton = null;
 

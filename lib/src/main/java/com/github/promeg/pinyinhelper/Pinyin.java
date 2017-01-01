@@ -1,8 +1,9 @@
 package com.github.promeg.pinyinhelper;
 
-import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
+import org.ahocorasick.trie.Trie;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -10,10 +11,12 @@ import java.util.List;
  */
 public final class Pinyin {
 
-    final AhoCorasickDoubleArrayTrie<String[]> mTrieDict;
+    final Trie mTrieDict;
     final SegmentationSelector mSelector;
+    final List<PinyinDict> mPinyinDicts;
 
     private Pinyin(List<PinyinDict> pinyinDicts, SegmentationSelector selector) {
+        mPinyinDicts = Collections.unmodifiableList(pinyinDicts);
         mTrieDict = Utils.dictsToTrie(pinyinDicts);
         mSelector = selector;
     }
@@ -23,7 +26,7 @@ public final class Pinyin {
     }
 
     public String toPinyin(String str, String separator) {
-        return Engine.toPinyin(str, mTrieDict, separator, mSelector);
+        return Engine.toPinyin(str, mTrieDict, mPinyinDicts, separator, mSelector);
     }
 
     /**

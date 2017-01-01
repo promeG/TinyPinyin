@@ -1,7 +1,6 @@
 package com.github.promeg.pinyinhelper;
 
-import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
-
+import org.ahocorasick.trie.Emit;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -21,65 +20,65 @@ public class ForwardLongestSelectorTest {
 
     @Test
     public void select_single_hit() throws Exception {
-        List<AhoCorasickDoubleArrayTrie<String[]>.Hit<String[]>> list = new ArrayList<AhoCorasickDoubleArrayTrie<java.lang.String[]>.Hit<String[]>>();
-        list.add(new AhoCorasickDoubleArrayTrie<String[]>().new Hit<String[]>(0, 4, null));
+        List<Emit> list = new ArrayList<Emit>();
+        list.add(new Emit(0, 4, null));
 
-        List<AhoCorasickDoubleArrayTrie<String[]>.Hit<String[]>> result = mSelector.select(list);
+        List<Emit> result = mSelector.select(list);
 
         assertThat(result.size(), is(1));
-        assertThat(result.get(0).begin, is(0));
-        assertThat(result.get(0).end, is(4));
+        assertThat(result.get(0).getStart(), is(0));
+        assertThat(result.get(0).getEnd(), is(4));
 
     }
 
     @Test
     public void select_multi_hit_no_overlap() throws Exception {
-        List<AhoCorasickDoubleArrayTrie<String[]>.Hit<String[]>> list = new ArrayList<AhoCorasickDoubleArrayTrie<java.lang.String[]>.Hit<String[]>>();
-        list.add(new AhoCorasickDoubleArrayTrie<String[]>().new Hit<String[]>(0, 5, null));
-        list.add(new AhoCorasickDoubleArrayTrie<String[]>().new Hit<String[]>(7, 8, null));
-        list.add(new AhoCorasickDoubleArrayTrie<String[]>().new Hit<String[]>(9, 10, null));
+        List<Emit> list = new ArrayList<Emit>();
+        list.add(new Emit(0, 5, null));
+        list.add(new Emit(7, 8, null));
+        list.add(new Emit(9, 10, null));
 
-        List<AhoCorasickDoubleArrayTrie<String[]>.Hit<String[]>> result = mSelector.select(list);
+        List<Emit> result = mSelector.select(list);
 
         assertThat(result.size(), is(3));
-        assertThat(result.get(0).begin, is(0));
-        assertThat(result.get(0).end, is(5));
+        assertThat(result.get(0).getStart(), is(0));
+        assertThat(result.get(0).getEnd(), is(5));
 
-        assertThat(result.get(1).begin, is(7));
-        assertThat(result.get(1).end, is(8));
+        assertThat(result.get(1).getStart(), is(7));
+        assertThat(result.get(1).getEnd(), is(8));
 
-        assertThat(result.get(2).begin, is(9));
-        assertThat(result.get(2).end, is(10));
+        assertThat(result.get(2).getStart(), is(9));
+        assertThat(result.get(2).getEnd(), is(10));
 
     }
 
     @Test
     public void select_multi_hit_with_overlap() throws Exception {
-        List<AhoCorasickDoubleArrayTrie<String[]>.Hit<String[]>> list = new ArrayList<AhoCorasickDoubleArrayTrie<java.lang.String[]>.Hit<String[]>>();
-        list.add(new AhoCorasickDoubleArrayTrie<String[]>().new Hit<String[]>(0, 4, null));
-        list.add(new AhoCorasickDoubleArrayTrie<String[]>().new Hit<String[]>(0, 4, null));
-        list.add(new AhoCorasickDoubleArrayTrie<String[]>().new Hit<String[]>(0, 5, null));
-        list.add(new AhoCorasickDoubleArrayTrie<String[]>().new Hit<String[]>(2, 3, null));
-        list.add(new AhoCorasickDoubleArrayTrie<String[]>().new Hit<String[]>(2, 10, null));
-        list.add(new AhoCorasickDoubleArrayTrie<String[]>().new Hit<String[]>(5, 7, null));
-        list.add(new AhoCorasickDoubleArrayTrie<String[]>().new Hit<String[]>(7, 8, null));
-        list.add(new AhoCorasickDoubleArrayTrie<String[]>().new Hit<String[]>(8, 9, null));
+        List<Emit> list = new ArrayList<Emit>();
+        list.add(new Emit(0, 4, null));
+        list.add(new Emit(0, 4, null));
+        list.add(new Emit(0, 5, null));
+        list.add(new Emit(2, 3, null));
+        list.add(new Emit(2, 10, null));
+        list.add(new Emit(5, 7, null));
+        list.add(new Emit(7, 8, null));
+        list.add(new Emit(8, 9, null));
 
-        List<AhoCorasickDoubleArrayTrie<String[]>.Hit<String[]>> result = mSelector.select(list);
+        List<Emit> result = mSelector.select(list);
 
         assertThat(result.size(), is(2));
-        assertThat(result.get(0).begin, is(0));
-        assertThat(result.get(0).end, is(5));
+        assertThat(result.get(0).getStart(), is(0));
+        assertThat(result.get(0).getEnd(), is(5));
 
-        assertThat(result.get(1).begin, is(7));
-        assertThat(result.get(1).end, is(8));
+        assertThat(result.get(1).getStart(), is(7));
+        assertThat(result.get(1).getEnd(), is(8));
 
     }
 
     @Test
     public void select_null_return_null() throws Exception {
 
-        List<AhoCorasickDoubleArrayTrie<String[]>.Hit<String[]>> result = mSelector.select(null);
+        List<Emit> result = mSelector.select(null);
 
         assertThat(result, nullValue());
 

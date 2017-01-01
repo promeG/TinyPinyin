@@ -1,7 +1,8 @@
 package com.github.promeg.pinyinhelper;
 
-import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
+import org.ahocorasick.trie.Emit;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -10,6 +11,6 @@ import java.util.List;
  * Created by guyacong on 2016/12/28.
  */
 
-public interface SegmentationSelector<T> {
-    List<AhoCorasickDoubleArrayTrie<T>.Hit<T>> select(List<AhoCorasickDoubleArrayTrie<T>.Hit<T>> hits);
+public interface SegmentationSelector {
+    List<Emit> select(Collection<Emit> emits);
 }

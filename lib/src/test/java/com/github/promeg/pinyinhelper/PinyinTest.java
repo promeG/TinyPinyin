@@ -1,7 +1,5 @@
 package com.github.promeg.pinyinhelper;
 
-import com.github.promeg.tinypinyin.lexicons.java.cncity.CnCityDict;
-
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
@@ -87,12 +85,12 @@ public class PinyinTest {
 
     @Test
     public void testInit_with_null_dict() {
-        Pinyin pinyin = Pinyin.with(new PinyinDict() {
+        Pinyin pinyin = Pinyin.with(new PinyinMapDict() {
                 @Override
                 public Map<String, String[]> mapping() {
                     return null;
                 }
-            }).with(new PinyinDict() {
+            }).with(new PinyinMapDict() {
                 @Override
                 public Map<String, String[]> mapping() {
                     return null;
@@ -104,7 +102,7 @@ public class PinyinTest {
 
     @Test
     public void testInit_with_nonnull_nokey_dict() {
-        Pinyin pinyin = Pinyin.with(new PinyinDict() {
+        Pinyin pinyin = Pinyin.with(new PinyinMapDict() {
                 @Override
                 public Map<String, String[]> mapping() {
                     return new HashMap<String, String[]>();
@@ -116,7 +114,7 @@ public class PinyinTest {
 
     @Test
     public void testInit_with_nonnull_haskey_dict() {
-        Pinyin pinyin = Pinyin.with(new PinyinDict() {
+        Pinyin pinyin = Pinyin.with(new PinyinMapDict() {
                 @Override
                 public Map<String, String[]> mapping() {
                     Map<String, String[]> map = new HashMap<String, String[]>();
@@ -125,19 +123,19 @@ public class PinyinTest {
                 }
             }).build();
 
-        assertThat(pinyin.mTrieDict.size(), is(1));
+        assertThat(pinyin.mTrieDict.containsMatch("1"), is(true));
     }
 
     @Test
     public void testInit_with_multi_haskey_dict() {
-        Pinyin pinyin = Pinyin.with(new PinyinDict() {
+        Pinyin pinyin = Pinyin.with(new PinyinMapDict() {
                 @Override
                 public Map<String, String[]> mapping() {
                     Map<String, String[]> map = new HashMap<String, String[]>();
                     map.put("1", new String[]{});
                     return map;
                 }
-            }).with(new PinyinDict() {
+            }).with(new PinyinMapDict() {
                 @Override
                 public Map<String, String[]> mapping() {
                     Map<String, String[]> map = new HashMap<String, String[]>();
@@ -146,19 +144,20 @@ public class PinyinTest {
                 }
             }).build();
 
-        assertThat(pinyin.mTrieDict.size(), is(2));
+        assertThat(pinyin.mTrieDict.containsMatch("1"), is(true));
+        assertThat(pinyin.mTrieDict.containsMatch("2"), is(true));
     }
 
     @Test
     public void testInit_with_multi_hasduplicatekey_dict() {
-        Pinyin pinyin = Pinyin.with(new PinyinDict() {
+        Pinyin pinyin = Pinyin.with(new PinyinMapDict() {
                 @Override
                 public Map<String, String[]> mapping() {
                     Map<String, String[]> map = new HashMap<String, String[]>();
                     map.put("1", new String[]{"Hello"});
                     return map;
                 }
-            }).with(new PinyinDict() {
+            }).with(new PinyinMapDict() {
                 @Override
                 public Map<String, String[]> mapping() {
                     Map<String, String[]> map = new HashMap<String, String[]>();
@@ -167,8 +166,7 @@ public class PinyinTest {
                 }
             }).build();
 
-        assertThat(pinyin.mTrieDict.size(), is(1));
-        assertThat(pinyin.mTrieDict.get("1")[0], is("Hello")); // first one in wins
+        assertThat(pinyin.mTrieDict.containsMatch("1"), is(true)); // first one in wins
     }
 
 
@@ -185,7 +183,7 @@ public class PinyinTest {
 
     @Test
     public void testToPinyin_Str_empty_dict() {
-        Pinyin pinyin = Pinyin.with(new PinyinDict() {
+        Pinyin pinyin = Pinyin.with(new PinyinMapDict() {
                 @Override
                 public Map<String, String[]> mapping() {
                     return null;
@@ -202,7 +200,7 @@ public class PinyinTest {
     @Test
     public void testToPinyin_Str_one_dict() {
 
-        Pinyin pinyin = Pinyin.with(new PinyinDict() {
+        Pinyin pinyin = Pinyin.with(new PinyinMapDict() {
                 @Override
                 public Map<String, String[]> mapping() {
                     Map<String, String[]> map = new HashMap<String, String[]>();
@@ -219,14 +217,14 @@ public class PinyinTest {
 
     @Test
     public void testToPinyin_Str_multi_dict() {
-        Pinyin pinyin = Pinyin.with(new PinyinDict() {
+        Pinyin pinyin = Pinyin.with(new PinyinMapDict() {
                 @Override
                 public Map<String, String[]> mapping() {
                     Map<String, String[]> map = new HashMap<String, String[]>();
                     map.put("重庆", new String[]{"CHONG", "QING"});
                     return map;
                 }
-            }).with(new PinyinDict() {
+            }).with(new PinyinMapDict() {
                 @Override
                 public Map<String, String[]> mapping() {
                     Map<String, String[]> map = new HashMap<String, String[]>();
@@ -242,6 +240,24 @@ public class PinyinTest {
         assertThat(pinyin.toPinyin(str, " "), is(expected));
     }
 
+    @Test
+    public void testToPinyin_Str_overlap() {
+        Pinyin pinyin = Pinyin.with(new PinyinMapDict() {
+            @Override
+            public Map<String, String[]> mapping() {
+                Map<String, String[]> map = new HashMap<String, String[]>();
+                map.put("中国人", new String[]{"SHOULD", "NOT", "MATCH"});
+                map.put("中国人民", new String[]{"ZHONG", "GUO", "REN", "MIN"});
+                return map;
+            }
+        }).build();
+
+        String str = "一个测试中国人民很赞";
+        String expected = "YI GE CE SHI ZHONG GUO REN MIN HEN ZAN";
+
+        assertThat(pinyin.toPinyin(str, " "), is(expected));
+    }
+
     private static char[] allChars() {
         char[] allChars = new char[Character.MAX_VALUE - Character.MIN_VALUE + 1];
         int length = allChars.length;
@@ -249,12 +265,5 @@ public class PinyinTest {
             allChars[i] = (char) (Character.MIN_VALUE + i);
         }
         return allChars;
-    }
-
-    @Test
-    public void temp() {
-        CnCityDict cityDict = CnCityDict.getInstance();
-
-        System.out.println(cityDict.mapping().size());
     }
 }

@@ -30,9 +30,14 @@ public class PinyinDictBenchmark {
         format.setVCharType(HanyuPinyinVCharType.WITH_V);
     }
 
-    //@Benchmark
+    @Benchmark
     public void measureMy_toPinyin_no_dict() {
         Pinyin.with(null).build().toPinyin(genRandomString(), ",");
+    }
+
+    @Benchmark
+    public void measureMy_pinyin_init() {
+        Pinyin.with(CnCityDict.getInstance()).build();
     }
 
     @Benchmark
@@ -41,12 +46,12 @@ public class PinyinDictBenchmark {
     }
 
 
-    //@Benchmark
+    @Benchmark
     public void measurePinyin4j_toPinyin() throws BadHanyuPinyinOutputFormatCombination {
         PinyinHelper.toHanyuPinyinString(genRandomString(), format, ",");
     }
 
-    //@Benchmark
+    @Benchmark
     public void measureMy_toPinyin_with_dict() {
         Pinyin.with(null).build().toPinyin(genRandomString(), ",");
     }

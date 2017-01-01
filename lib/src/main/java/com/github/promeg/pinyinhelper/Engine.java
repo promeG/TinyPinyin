@@ -1,6 +1,8 @@
 package com.github.promeg.pinyinhelper;
 
-import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
+
+import org.ahocorasick.trie.Emit;
+import org.ahocorasick.trie.Trie;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,10 +20,10 @@ final class Engine {
         //no instance
     }
 
-    static String toPinyin(final String inputStr, final AhoCorasickDoubleArrayTrie<String[]> trie,
-            final String separator, final SegmentationSelector<String[]> selector) {
+    static String toPinyin(final String inputStr, final Trie trie, final  List<PinyinDict> pinyinDictList,
+            final String separator, final SegmentationSelector selector) {
 
-        if (trie == null || trie.size() == 0 || selector == null) {
+        if (trie == null || selector == null) {
             // 没有提供字典或选择器，按单字符转换输出
             StringBuffer resultPinyinStrBuf = new StringBuffer();
             for (int i = 0; i < inputStr.length(); i++) {
@@ -33,9 +35,9 @@ final class Engine {
             return resultPinyinStrBuf.toString();
         }
 
-        List<AhoCorasickDoubleArrayTrie<String[]>.Hit<String[]>> selectedHits = selector.select(trie.parseText(inputStr));
+        List<Emit> selectedEmits = selector.select(trie.parseText(inputStr));
 
-        Collections.sort(selectedHits, HIT_COMPARATOR);
+        Collections.sort(selectedEmits, HIT_COMPARATOR);
 
         StringBuffer resultPinyinStrBuf = new StringBuffer();
 
@@ -43,9 +45,9 @@ final class Engine {
 
         for (int i = 0; i < inputStr.length();) {
             // 首先确认是否有以第i个字符作为begin的hit
-            if (nextHitIndex < selectedHits.size() && i == selectedHits.get(nextHitIndex).begin) {
+            if (nextHitIndex < selectedEmits.size() && i == selectedEmits.get(nextHitIndex).getStart()) {
                 // 有以第i个字符作为begin的hit
-                String[] fromDicts = selectedHits.get(nextHitIndex).value;
+                String[] fromDicts = pinyinFromDict(selectedEmits.get(nextHitIndex).getKeyword(), pinyinDictList);
                 for (int j = 0; j < fromDicts.length; j++) {
                     resultPinyinStrBuf.append(fromDicts[j].toUpperCase());
                     if (j != fromDicts.length - 1) {
@@ -53,7 +55,7 @@ final class Engine {
                     }
                 }
 
-                i = i + (selectedHits.get(nextHitIndex).end - selectedHits.get(nextHitIndex).begin);
+                i = i + selectedEmits.get(nextHitIndex).size();
                 nextHitIndex++;
             } else {
                 // 将第i个字符转为拼音
@@ -69,19 +71,28 @@ final class Engine {
         return resultPinyinStrBuf.toString();
     }
 
-    static final class HitComparator implements Comparator<AhoCorasickDoubleArrayTrie<java.lang.String[]>.Hit<String[]>> {
+    static String[] pinyinFromDict(String wordInDict, List<PinyinDict> pinyinDictSet) {
+        if (pinyinDictSet != null) {
+            for (PinyinDict dict : pinyinDictSet) {
+                if (dict != null && dict.words() != null
+                        && dict.words().contains(wordInDict)) {
+                    return dict.toPinyin(wordInDict);
+                }
+            }
+        }
+        throw new IllegalArgumentException("No pinyin dict contains word: " + wordInDict);
+    }
+
+    static final class HitComparator implements Comparator<Emit> {
 
         @Override
-        public int compare(AhoCorasickDoubleArrayTrie<String[]>.Hit<String[]> o1,
-                AhoCorasickDoubleArrayTrie<String[]>.Hit<String[]> o2) {
-            if (o1.begin == o2.begin) {
+        public int compare(Emit o1, Emit o2) {
+            if (o1.getStart() == o2.getStart()) {
                 // 起点相同时，更长的排前面
-                int o1Length = o1.end - o1.begin;
-                int o2Length = o2.end - o2.begin;
-                return (o1Length < o2Length) ? 1 : ((o1Length == o2Length) ? 0 : -1);
+                return (o1.size() < o2.size()) ? 1 : ((o1.size() == o2.size()) ? 0 : -1);
             } else {
                 // 起点小的放前面
-                return (o1.begin < o2.begin) ? -1 : ((o1.begin == o2.begin) ? 0 : 1);
+                return (o1.getStart() < o2.getStart()) ? -1 : ((o1.getStart() == o2.getStart()) ? 0 : 1);
             }
         }
     }
