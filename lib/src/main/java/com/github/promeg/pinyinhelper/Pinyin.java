@@ -46,7 +46,7 @@ public final class Pinyin {
      *
      * 注意: 若有多个词典，推荐使用性能更优的 {@link Pinyin#init(Config)} 初始化Pinyin。
      *
-     * @param dict
+     * @param dict 输入的词典
      */
     public static void add(PinyinDict dict) {
         if (dict == null || dict.words() == null || dict.words().size() == 0) {
@@ -59,7 +59,7 @@ public final class Pinyin {
     /**
      * 返回新的{@link Pinyin.Config} 对象
      *
-     * @return
+     * @return 新的Config对象
      */
     public static Config newConfig() {
         return new Config(null);
@@ -68,7 +68,7 @@ public final class Pinyin {
     /**
      * 将输入字符串转为拼音，转换过程中会使用之前设置的用户词典，以字符为单位插入分隔符
      *
-     * 例: "hello:中国"  在separator为","时，输出--> "h,e,l,l,o,:,ZHONG,GUO,!"
+     * 例: "hello:中国"  在separator为","时，输出： "h,e,l,l,o,:,ZHONG,GUO,!"
      *
      * @param str  输入字符串
      * @param separator 分隔符

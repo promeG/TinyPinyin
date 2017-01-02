@@ -13,6 +13,7 @@ import static org.hamcrest.core.Is.is;
 /**
  * Created by guyacong on 2016/12/23.
  */
+//CHECKSTYLE:OFF
 public class CnCityDictTest {
 
     CnCityDict mDict;
@@ -66,3 +67,4 @@ public class CnCityDictTest {
         }
     }
 }
+//CHECKSTYLE:ON

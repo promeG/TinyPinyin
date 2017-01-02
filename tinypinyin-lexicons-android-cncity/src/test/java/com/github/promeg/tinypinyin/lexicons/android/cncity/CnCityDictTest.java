@@ -17,6 +17,7 @@ import static org.hamcrest.core.Is.is;
 /**
  * Created by guyacong on 2016/12/23.
  */
+//CHECKSTYLE:OFF
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 23, constants = BuildConfig.class, application = TestApp.class)
 public class CnCityDictTest {
@@ -76,3 +77,4 @@ public class CnCityDictTest {
 
 
 }
+//CHECKSTYLE:ON

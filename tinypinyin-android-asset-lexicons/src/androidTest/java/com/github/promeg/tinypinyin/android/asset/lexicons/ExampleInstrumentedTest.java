@@ -1,13 +1,14 @@
-package com.github.promeg.tinypinyin.lexicons.android.cncity;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
+package com.github.promeg.tinypinyin.android.asset.lexicons;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import static junit.framework.Assert.assertEquals;
+
 
 /**
  * Instrumentation test, which will execute on an Android device.
@@ -22,7 +23,7 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.github.promeg.tinypinyin.lexicons.android.cncity.test",
+        assertEquals("com.github.promeg.tinypinyin.android.asset.lexicons.test",
                 appContext.getPackageName());
     }
 }

@@ -1,0 +1,107 @@
+import java.text.SimpleDateFormat
+
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: "com.jfrog.bintray"
+
+def siteUrl = "https://github.com/promeG/TinyPinyin"
+def gitUrl = "https://github.com/promeG/TinyPinyin.git"
+def developerInfo = rootProject.ext.developer
+def licenseInfo = rootProject.ext.license
+
+group = rootProject.ext.groupName
+version = rootProject.ext.releaseVersionName
+
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+                // Add your description here
+                name project.name
+                url siteUrl
+                // Set your license
+                licenses {
+                    license {
+                        name licenseInfo.name
+                        url licenseInfo.url
+                    }
+                }
+                developers {
+                    developer {
+                        id developerInfo.id
+                        name developerInfo.name
+                        email developerInfo.email
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    if (project.getPlugins().hasPlugin('com.android.application') ||
+            project.getPlugins().hasPlugin('com.android.library')) {
+        from android.sourceSets.main.java.srcDirs
+    }
+    classifier = 'sources'
+}
+
+if (project.getPlugins().hasPlugin('com.android.application') ||
+        project.getPlugins().hasPlugin('com.android.library')) {
+    task javadoc(type: Javadoc) {
+        failOnError = false
+        source = android.sourceSets.main.java.srcDirs
+        android.compileSdkVersion rootProject.ext.androidCompileSdkVersion
+        android.buildToolsVersion rootProject.ext.androidBuildToolsVersion
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+Properties properties = new Properties()
+// for wrapper project structure
+File propertyFile = project.rootProject.file('bintray.properties')
+if (propertyFile.exists()) {
+    properties.load(propertyFile.newDataInputStream())
+}
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    configurations = ['archives'] //When uploading Maven-based publication files
+    dryRun = false //Whether to run this as dry-run, without deploying
+    publish = true //If version should be auto published after an upload
+    pkg {
+        repo = 'maven'
+        name = project.name
+        desc = project.ext.descText
+        websiteUrl = siteUrl
+        issueTrackerUrl = siteUrl + '/issues'
+        vcsUrl = gitUrl
+        licenses = [licenseInfo.id]
+        labels = rootProject.ext.artifactLabels
+        publicDownloadNumbers = true
+        //Optional version descriptor
+        version {
+            name = rootProject.ext.releaseVersionName //Bintray logical version name
+            released = new SimpleDateFormat('yyyy-MM-dd\'T\'HH:mm:ss.SSSZZ').format(new Date())
+            //2 possible values: date in the format of 'yyyy-MM-dd'T'HH:mm:ss.SSSZZ' OR a java.util.Date instance
+            vcsTag = rootProject.ext.releaseVersionName
+        }
+    }
+}

@@ -8,10 +8,12 @@ import java.util.List;
 /**
  * 分词选择算法应实现的接口
  *
+ * TODO: 开放此接口，提供更多的预制Selector，也可供使用者实现自定义Selector
+ *
  * Created by guyacong on 2016/12/28.
  */
 
-public interface SegmentationSelector {
+interface SegmentationSelector {
 
     /**
      * 从匹配到的所有词中，挑选出合适的词列表

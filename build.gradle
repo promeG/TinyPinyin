@@ -15,12 +15,30 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        mavenLocal()
     }
 }
 
 ext {
+    userName = 'PromeG'
+    developer = [
+            id   : 'promeg',
+            name : 'promeg',
+            email: 'gyacong@gmail.com'
+    ]
+    license = [
+            id  : 'MIT',
+            name: 'The MIT License (MIT)',
+            url : 'http://opensource.org/licenses/MIT'
+    ]
     groupName = 'com.github.promeg'
-    releaseVersionName = "2.0.0-alpha"
+    artifactName = 'TinyPinyin'
+    artifactDescription = '适用于Java和Android的快速、低内存占用的汉字转拼音库。'
+    artifactLabels = ['pinyin', 'java', 'android']
+
+
+    groupName = 'com.github.promeg'
+    releaseVersionName = "2.0.0"
     releaseVersionCode = 3
 
     // Android

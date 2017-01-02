@@ -14,7 +14,7 @@ public abstract class PinyinMapDict implements PinyinDict {
     /**
      * Key为字典的词，Value为该词所对应的拼音
      *
-     * @return
+     * @return 包含词和对应拼音的 {@link java.util.Map}
      */
     public abstract Map<String, String[]> mapping();
 
