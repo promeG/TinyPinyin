@@ -1,5 +1,4 @@
 apply plugin: 'checkstyle'
-apply plugin: 'findbugs'
 
 checkstyle {
     // will fire "java.lang.ClassNotFoundException: com.puppycrawl.tools.checkstyle
@@ -25,12 +24,4 @@ task checkstyle(type: Checkstyle, group: 'verification') {
 
     // empty classpath
     classpath = files()
-}
-
-findbugs {
-    toolVersion = "3.0.1"
-    ignoreFailures = false
-    effort = "max"
-    reportLevel = "high"
-    excludeFilter file('../config/quality/findbugs/findbugs-filter.xml')
 }

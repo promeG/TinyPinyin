@@ -34,7 +34,7 @@ final class BenchmarkUtils {
                         reader = new BufferedReader(new InputStreamReader(is));
                         String line;
                         while ((line = reader.readLine()) != null) {
-                           sb.append(line);
+                            sb.append(line);
                         }
                     } catch (IOException e) {
                         e.printStackTrace();

@@ -5,6 +5,6 @@
         <Class name="~.*\.R\$.*"/>
     </Match>
     <Match>
-    <Class name="~.*\.Manifest\$.*"/>
+        <Class name="~.*\.Manifest\$.*"/>
     </Match>
 </FindBugsFilter>
