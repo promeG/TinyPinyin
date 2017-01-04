@@ -1,8 +1,20 @@
 language: android
+jdk:
+  - oraclejdk8
+
 android:
   components:
-    - build-tools-22.0.1
-    - android-22
+    - tools
+    - tools
+    - platform-tools
+    - build-tools-24.0.3
+    - android-24
+    - extra-google-m2repository
+    - extra-android-m2repository
+  licenses:
+    - 'android-sdk-preview-license-.+'
+    - 'android-sdk-license-.+'
+    - 'google-gdk-license-.+'
 
 before_script:
   - chmod +x gradlew
