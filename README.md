@@ -1,20 +1,19 @@
 # TinyPinyin
-[ ![Download](https://api.bintray.com/packages/promeg/maven/tinypinyin/images/download.svg) ](https://bintray.com/promeg/maven/tinypinyin/_latestVersion)
-[![Build Status](https://travis-ci.org/promeG/TinyPinyin.svg?branch=master)](https://travis-ci.org/promeG/TinyPinyin)
 
+[![Download](https://api.bintray.com/packages/promeg/maven/tinypinyin/images/download.svg)](https://bintray.com/promeg/maven/tinypinyin/_latestVersion) [![Build Status](https://travis-ci.org/promeG/TinyPinyin.svg?branch=master)](https://travis-ci.org/promeG/TinyPinyin)
 
 适用于Java和Android的快速、低内存占用的汉字转拼音库。
 
 ## 特性
 
-1.	生成的拼音不包含声调，也不处理多音字，默认一个汉字对应一个拼音；
-2.	拼音均为大写；
-3.	无需初始化，执行效率很高(Pinyin4J的4倍)；
-4.	很低的内存占用（小于30KB）。
+1. 生成的拼音不包含声调，均为大写；
+2. 支持自定义词典；
+3. 执行效率很高(Pinyin4J的4~16倍)；
+4. 很低的内存占用（不添加词典时小于30KB）。
 
 ## 使用
 
-### API
+### 汉字转拼音API
 
 ```java
 /**
@@ -26,6 +25,29 @@ String Pinyin.toPinyin(char c)
  * c为汉字，则返回true，否则返回false
  */
 boolean Pinyin.isChinese(char c)
+
+/**
+ * 将输入字符串转为拼音，转换过程中会使用之前设置的用户词典，以字符为单位插入分隔符
+ */
+String toPinyin(String str, String separator)
+```
+
+### 词典API
+
+```java
+// 添加中文城市词典
+Pinyin.init(Pinyin.newConfig().with(CnCityDict.getInstance());
+
+// 添加自定义词典
+Pinyin.init(Pinyin.newConfig()
+            .with(new PinyinMapDict() {
+                @Override
+                public Map<String, String[]> mapping() {
+                    HashMap<String, String[]> map = new HashMap<String, String[]>();
+                    map.put("重庆",  new String[]{"CHONG", "QING"});
+                    return map;
+                }
+            }));
 ```
 
 ### 添加到工程
@@ -37,31 +59,34 @@ buildscript {
   }
 
   dependencies {
-    compile 'com.github.promeg:tinypinyin:1.0.0' // ~80KB
+    compile 'com.github.promeg:tinypinyin:2.0.0' // TinyPinyin核心包，约80KB
+    compile 'com.github.promeg:tinypinyin-lexicons-android-cncity:2.0.0' // 可选，适用于Android的中国地区词典
+
+    compile 'com.github.promeg:tinypinyin-lexicons-java-cncity:2.0.0' // 可选，适用于Java的中国地区词典
   }
 }
 ```
 
 ## 详细说明
 
-### 1. 设计目标
+### 1\. 设计目标
 
 #### Pinyin4J的问题
 
 1. Jar文件较大，205KB；
 2. Pinyin4J的PinyinHelper.toHanyuPinyinStringArray 在第一次调用时耗时非常长（~2000ms）；
-3. 功能臃肿，许多情况下我们不需要声调、方言，（暂时）也不需要处理一字多音的情况；
-4. 内存占用太高；
+3. 功能臃肿，许多情况下我们不需要声调、方言；
+4. 无法添加自定义词典，进而无法有效处理多音字
+5. 内存占用太高；
 
 #### TinyPinyin特性
 
-1. 转换后的结果**不**包含声调和方言，也**不**处理多音字，默认一个汉字仅对应一个拼音；
-2. 无需初始化，保证多次调用时，有稳定的返回时间；
+1. 转换后的结果**不**包含声调和方言；
+2. 支持自定义词典，方便处理多音字；
 3. 尽可能低的内存占用；
-4. 比Pinyin4J更快的转换速度。
+4. 比Pinyin4J更快的转换速度;
 
-
-### 2. Correctness
+### 2\. Correctness
 
 以Pinyin4J作为基准，确保对所有的字符（Character.MAX_VALUE ~ Character.MIN_VALUE），TinyPinyin与Pinyin4J有相同的返回结果。
 
@@ -69,59 +94,59 @@ buildscript {
 
 该部分请见PinyinTest.java
 
-采用以下命令运行test： 
+采用以下命令运行test：
 
 ```groovy
-./gradlew :lib:test
+./gradlew clean build :lib:test :tinypinyin-lexicons-android-cncity:test :tinypinyin-android-asset-lexicons:test
 ```
 
-### 3. Effectiveness
+### 3\. Effectiveness
 
 #### 速度
 
-使用[JMH](http://openjdk.java.net/projects/code-tools/jmh/)工具得到bechmark，对比TinyPinyin和Pinyin4J的运行速度。 
+使用[JMH](http://openjdk.java.net/projects/code-tools/jmh/)工具得到bechmark，对比TinyPinyin和Pinyin4J的运行速度。
 
-具体测例请见PinyinSampleBenchmark.java。
+具体测例请见lib/src/jmh/中的性能测试代码。
 
-采用以下命令运行benchmark： 
+采用以下命令运行benchmark：
 
 ```groovy
-./gradlew :lib:jmh
+./gradlew :lib:jmhFixed
 ```
 
-生成的报告在 pinyinhelper/build/reports/jmh/ 中，运行一次约耗时 5min。
+生成的报告在 pinyinhelper/build/reports/jmh/ 中。
 
-| Benchmark  | Mode | Samples | Score | Unit |
-| -------------: | :-------------: | :------------: | ------:| :------: |
-| TinyPinyin.isChinese       | thrpt  | 40 | 181 | ops/us |
-| TinyPinyin.isChinese(内存优化后)       | thrpt  | 40 | 185 | ops/us |
-| Pinyin4J.isChinese  | thrpt  | 40 | 39  | ops/us |
-| TinyPinyin.toPinyin       | thrpt  | 40 | 174 | ops/us |
-| TinyPinyin.toPinyin(内存优化后)       | thrpt  | 40 | 160 | ops/us |
-| Pinyin4J.toPinyin  | thrpt  | 40 | 40| ops/us |
+性能测试结果简要说明：单个字符转拼音的速度是Pinyin4j的**四倍**，添加字典后字符串转拼音的速度是Pinyin4j的**16倍**。
+
+详细测试结果：
+
+Benchmark | Mode  | Samples | Score |  Unit
+-------------------------- | --- | ----- | ---- | ----
+TinyPinyin_Init_With_Large_Dict（初始化大词典）| thrpt | 200 | 66.131 | ops/s
+TinyPinyin_Init_With_Small_Dict（初始化小词典）  | thrpt | 200 | 35408.045 | ops/s
+TinyPinyin_StringToPinyin_With_Large_Dict（添加大词典后进行String转拼音） | thrpt | 200 | 16.268 | ops/ms
+Pinyin4j_StringToPinyin（Pinyin4j的String转拼音） | thrpt | 200 | 1.033 | ops/ms
+TinyPinyin_CharToPinyin（字符转拼音） | thrpt | 200 | 14.285 | ops/us
+Pinyin4j_CharToPinyin（Pinyin4j的字符转拼音）| thrpt | 200 | 4.460 | ops/us
+TinyPinyin_IsChinese（字符是否为汉字） | thrpt | 200 | 15.552 | ops/us
+Pinyin4j_IsChinese（Pinyin4j的字符是否为汉字） | thrpt | 200 | 4.432 | ops/us
 
 #### 内存占用
 
-1. 3个static byte[7000] 存储所有汉字的拼音的低8位，占用7000 * 1 * 3 = 21KB 内存；
-2. 3个static byte[7000/8] 存储所有汉字的拼音的第9位（最高位），占用7000 / 8 * 1 * 3 = 3KB 内存；
-2. 一个String[408] 存储所有可能的拼音，占用 1.7KB 内存；
+##### 1. 不添加词典时
+
++ 3个static byte[7000] 存储所有汉字的拼音的低8位，占用7000 _1_ 3 = 21KB 内存；
++ 3个static byte[7000/8] 存储所有汉字的拼音的第9位（最高位），占用7000 / 8 _1_ 3 = 3KB 内存；
++ 一个String[408] 存储所有可能的拼音，占用 1.7KB 内存；
 
 共占用 < 30KB.
 
+##### 2. 添加词典时
 
-### 4. 遇到的问题
+使用‘com.github.promeg:tinypinyin-lexicons-java-cncity:2.0.0’时，额外消耗约43KB内存。
 
-1. 存储所有汉字拼音的数组长约21000，但硬编码到一个数组中，java编译会失败：code too large（[原因](http://stackoverflow.com/questions/2407912/code-too-large-compilation-error-in-java)）。 采用将数组分割为3个，并放置到三个类中即可解决。
-2. 汉字中有一个异类：unicode 12295，出了它之外，剩余汉字均分布在19968 ~ 40869之间，为了尽可能的减小存储拼音的数组大小，对12295做单独处理，其它汉字用short[40869-19968]存储即可，offset为19968。
+## Todo
 
-### 5. 下一步改进
-
-**注：该项改进已于2015-9-30日完成**
-
-由于汉字拼音共有407个，因此需要9位来表示一个拼音。Java中byte为8位，short为16位，因此目前采用short来表示一个拼音。
-
-但使用short造成了较大的浪费，每个拼音编码浪费了16 - 9 = 7位，也就是说，理想情况下我们可以将存储所有汉字拼音的42KB内存优化到 42*9/16 = 24KB。
-
-思路是使用byte[21000]存储每个汉字的低8位拼音编码，另外采用byte[21000/8]来存储每个汉字第9位（最高位）的编码，每个byte可存储8个汉字的第9位编码。 共耗用内存21KB + 3KB = 24KB。
-
-实施上述内存优化后，Our.isChinese性能基本持平，Our.toPinyin速度下降了8%，仍能达到160 ops/us，是Pinyin4J的4倍，可以接受。 这里速度下降的原因是每次取拼音时均需进行一次offset的解码。
++ 支持繁体中文
++ 压缩词库
++ 词库生成工具
