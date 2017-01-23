@@ -423,6 +423,13 @@ public class PinyinTest {
         assertThat(Pinyin.toPinyin(str, " "), is(expected));
     }
 
+    @Test
+    public void testToPinyin_traditional_chars() throws BadHanyuPinyinOutputFormatCombination {
+        for (char c : TraditionalCharSet.All) {
+            assertThat(Pinyin.isChinese(c), is(true));
+        }
+    }
+
     private static char[] allChars() {
         char[] allChars = new char[Character.MAX_VALUE - Character.MIN_VALUE + 1];
         int length = allChars.length;
