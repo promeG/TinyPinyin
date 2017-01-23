@@ -7,7 +7,7 @@
 ## 特性
 
 1. 生成的拼音不包含声调，均为大写；
-2. 支持自定义词典；
+2. 支持自定义词典，支持简体中文、繁体中文；
 3. 执行效率很高(Pinyin4J的4~16倍)；
 4. 很低的内存占用（不添加词典时小于30KB）。
 
@@ -95,6 +95,8 @@ buildscript {
 
 该部分请见PinyinTest.java
 
+繁体中文的测试请见：PinyinTest.testToPinyin_traditional_chars()
+
 采用以下命令运行test：
 
 ```groovy
@@ -148,6 +150,6 @@ Pinyin4j_IsChinese（Pinyin4j的字符是否为汉字） | thrpt | 200 | 4.432 |
 
 ## Todo
 
-+ 支持繁体中文
++ ~~支持繁体中文~~
 + 压缩词库
 + 词库生成工具
