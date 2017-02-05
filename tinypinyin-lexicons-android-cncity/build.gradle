@@ -17,7 +17,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.android.tools.build:gradle:2.2.3'
     }
 
 }
@@ -62,7 +62,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'com.github.promeg:tinypinyin:' + rootProject.ext.releaseVersionName
     compile 'com.github.promeg:tinypinyin-android-asset-lexicons:' + rootProject.ext.releaseVersionName
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {

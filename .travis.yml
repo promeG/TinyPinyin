@@ -16,10 +16,25 @@ android:
     - 'android-sdk-license-.+'
     - 'google-gdk-license-.+'
 
+# Emulator Management: Create, Start and Wait
 before_script:
+  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+  - emulator -avd test -no-audio -no-window &
   - chmod +x gradlew
 
 script:
   - echo "Travis branch is $TRAVIS_BRANCH"
   - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
-  - ./gradlew clean build :lib:test :tinypinyin-lexicons-android-cncity:test :tinypinyin-android-asset-lexicons:test
+  - android-wait-for-emulator
+  - adb shell input keyevent 82
+  - ./gradlew clean build :lib:test :tinypinyin-lexicons-android-cncity:test :tinypinyin-android-asset-lexicons:test :android-sample:connectedAndroidTest
+
+
+notifications:
+  email:
+    - gyacong@gmail.com
+
+cache:
+  directories:
+    - $HOME/.m2
+    - $HOME/.gradle

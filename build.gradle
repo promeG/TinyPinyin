@@ -1,14 +1,16 @@
-group 'com.github.promeg'
-version '1.0-SNAPSHOT'
-
-
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.1'
+        classpath 'com.android.tools.build:gradle:2.2.3'
+
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.1"
+        classpath "gradle.plugin.com.kageiit:lintrules:1.1.2"
     }
 }
 
@@ -38,7 +40,7 @@ ext {
 
 
     groupName = 'com.github.promeg'
-    releaseVersionName = "2.0.1"
+    releaseVersionName = "2.0.2"
     releaseVersionCode = 4
 
     // Android
