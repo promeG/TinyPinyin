@@ -1,4 +1,5 @@
-﻿DU'LAN 都兰
+﻿
+DU'LAN 都兰
 ZHA'SHUI 柞水
 LU'HE 六合
 JUN'LIAN 筠连
@@ -64,7 +65,6 @@ CHANG'QING 长清
 CHANG'FENG 长丰
 CHANG'LE 长乐
 FENG'DU 丰都
-﻿A'BA 阿坝
 KA'SHI 喀什
 TONG'BAI 桐柏
 YUE'QING 乐清

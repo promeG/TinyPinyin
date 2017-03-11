@@ -28,7 +28,7 @@ public class CnCityDictTest {
         Set<String> words = mDict.mapping().keySet();
 
         assertThat(words.contains(null), is(false));
-        assertThat(words.size(), is(98));
+        assertThat(words.size(), is(97));
     }
 
     @Test
@@ -64,6 +64,19 @@ public class CnCityDictTest {
             }
 
             assertThat(hasDifferent, is(true));
+        }
+    }
+
+    // 字典返回的拼音应该只包含英文字母, fix issue 5
+    @Test
+    public void test_pinyin_only_contains_letters() throws Exception {
+        Set<String> words = mDict.mapping().keySet();
+        for (String word : words) {
+            String[] pinyins = mDict.mapping().get(word);
+
+            for (String pinyin : pinyins) {
+                assertThat(pinyin.matches("[a-zA-Z]+"), is(true));
+            }
         }
     }
 }
