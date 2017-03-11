@@ -59,11 +59,11 @@ buildscript {
   }
 
   dependencies {
-    compile 'com.github.promeg:tinypinyin:2.0.2' // TinyPinyin核心包，约80KB
+    compile 'com.github.promeg:tinypinyin:2.0.3' // TinyPinyin核心包，约80KB
 
-    compile 'com.github.promeg:tinypinyin-lexicons-android-cncity:2.0.2' // 可选，适用于Android的中国地区词典
+    compile 'com.github.promeg:tinypinyin-lexicons-android-cncity:2.0.3' // 可选，适用于Android的中国地区词典
 
-    compile 'com.github.promeg:tinypinyin-lexicons-java-cncity:2.0.2' // 可选，适用于Java的中国地区词典
+    compile 'com.github.promeg:tinypinyin-lexicons-java-cncity:2.0.3' // 可选，适用于Java的中国地区词典
   }
 }
 ```
@@ -151,5 +151,6 @@ Pinyin4j_IsChinese（Pinyin4j的字符是否为汉字） | thrpt | 200 | 4.432 |
 ## Todo
 
 + ~~支持繁体中文~~
++ 支持姓氏拼音
 + 压缩词库
 + 词库生成工具
