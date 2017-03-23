@@ -11,6 +11,14 @@
 3. 执行效率很高(Pinyin4J的4~16倍)；
 4. 很低的内存占用（不添加词典时小于30KB）。
 
+## 原理介绍
+
+[打造最好的Java拼音库TinyPinyin（一）：单字符转拼音的极致优化](http://promeg.io/2017/03/18/tinypinyin-part-1/)
+
+[打造最好的Java拼音库TinyPinyin（二）：多音字快速处理方案](http://promeg.io/2017/03/20/tinypinyin-part-2/)
+
+[打造最好的Java拼音库TinyPinyin（三）：API设计和测试实践](http://promeg.io/2017/03/22/tinypinyin-part-3/)
+
 ## 使用
 
 ### 汉字转拼音API
