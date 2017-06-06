@@ -1,0 +1,76 @@
+apply plugin: 'com.android.library'
+
+ext {
+    descText = 'TinyPinyin词典：适用于Android的中国地区名称字典。'
+}
+
+apply from: '../config/quality-java.gradle'
+apply from: "$rootProject.rootDir.absolutePath/gradle/publish-android-library.gradle"
+
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.3'
+    }
+
+}
+
+def isTravis = "true".equals(System.getenv("TRAVIS"))
+
+android {
+    compileSdkVersion rootProject.ext.androidCompileSdkVersion
+    buildToolsVersion rootProject.ext.androidBuildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.androidMinSdkVersion
+        targetSdkVersion rootProject.ext.androidTargetSdkVersion
+        versionCode rootProject.ext.releaseVersionCode
+        versionName rootProject.ext.releaseVersionName
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    testOptions.unitTests.all {
+        testLogging {
+            events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+            outputs.upToDateWhen { false }
+            showStandardStreams = true
+        }
+    }
+
+    if (isTravis) {
+        lintOptions {
+            abortOnError false
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'com.github.promeg:tinypinyin-android-asset-lexicons:' + rootProject.ext.releaseVersionName
+
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.robolectric:robolectric:3.1.4'
+    testCompile 'org.mockito:mockito-core:2.0.71-beta'
+    testCompile 'org.unitils:unitils-core:3.4.2'
+    testCompile 'org.hamcrest:hamcrest-all:1.3'
+}

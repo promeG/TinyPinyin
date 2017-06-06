@@ -1,0 +1,100 @@
+import java.text.SimpleDateFormat
+
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+apply from: '../config/quality-java.gradle'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.github.promeg:tinypinyin:' + rootProject.ext.releaseVersionName
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-all:1.3'
+    testCompile 'org.assertj:assertj-core:1.7.1'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs "src/main/resources"
+        }
+    }
+}
+
+
+sourceCompatibility = "1.6"
+targetCompatibility = "1.6"
+
+group = rootProject.ext.groupName
+version = rootProject.ext.releaseVersionName
+
+// custom tasks for creating source/javadoc jars
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+// add javadoc/source jar tasks as artifacts
+artifacts {
+    archives sourcesJar, javadocJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            if (plugins.hasPlugin('war')) {
+                from components.web
+            } else {
+                from components.java
+            }
+
+            artifact sourcesJar
+            artifact javadocJar
+
+            artifactId project.name
+        }
+    }
+}
+
+bintray {
+    user = bintray_user
+    key = bintray_api_key
+
+    publications = ['mavenJava']
+
+    dryRun = false
+    publish = true
+    pkg {
+        repo = 'maven'
+        name = project.name
+        desc = 'TinyPinyin词典：适用于Java的中国地区名称字典。'
+        websiteUrl = 'https://github.com/promeG/TinyPinyin'
+        issueTrackerUrl = 'https://github.com/promeG/TinyPinyin/issues'
+        vcsUrl = 'https://github.com/promeG/TinyPinyin.git'
+        licenses = ['Apache-2.0']
+        labels = ['pinyin', 'java', 'android']
+        publicDownloadNumbers = true
+        //Optional version descriptor
+        version {
+            name = rootProject.ext.releaseVersionName //Bintray logical version name
+            released = new SimpleDateFormat('yyyy-MM-dd\'T\'HH:mm:ss.SSSZZ').format(new Date())
+            vcsTag = rootProject.ext.releaseVersionName
+            mavenCentralSync {
+                sync = false
+                //Optional (true by default). Determines whether to sync the version to Maven Central.
+                user = 'userToken' //OSS user token
+                password = 'paasword' //OSS user password
+                close = '1'
+                //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
+            }
+        }
+    }
+}
+

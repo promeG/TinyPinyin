@@ -1,16 +1,88 @@
 package com.github.promeg.pinyinhelper;
 
+import org.ahocorasick.trie.Trie;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by guyacong on 2015/9/28.
  */
 public final class Pinyin {
 
+    static Trie mTrieDict = null;
+    static SegmentationSelector mSelector = null;
+    static List<PinyinDict> mPinyinDicts = null;
+
     private Pinyin() {
-        //no instance
     }
 
     /**
-     * return pinyin if c is chinese in uppercase, String.valueOf(c) otherwise.
+     * 使用 {@link Pinyin.Config} 初始化Pinyin。
+     *
+     * @param config 相应的设置，传入null则会清空所有的词典
+     */
+    public static void init(Config config) {
+        if (config == null) {
+            // 清空设置
+            mPinyinDicts = null;
+            mTrieDict = null;
+            mSelector = null;
+            return;
+        }
+
+        if (!config.valid()) {
+            // 忽略无效Config
+            return;
+        }
+        mPinyinDicts = Collections.unmodifiableList(config.getPinyinDicts());
+        mTrieDict = Utils.dictsToTrie(config.getPinyinDicts());
+        mSelector = config.getSelector();
+    }
+
+    /**
+     * 向Pinyin中追加词典。
+     *
+     * 注意: 若有多个词典，推荐使用性能更优的 {@link Pinyin#init(Config)} 初始化Pinyin。
+     *
+     * @param dict 输入的词典
+     */
+    public static void add(PinyinDict dict) {
+        if (dict == null || dict.words() == null || dict.words().size() == 0) {
+            // 无效字典
+            return;
+        }
+        init(new Config(mPinyinDicts).with(dict));
+    }
+
+    /**
+     * 返回新的{@link Pinyin.Config} 对象
+     *
+     * @return 新的Config对象
+     */
+    public static Config newConfig() {
+        return new Config(null);
+    }
+
+    /**
+     * 将输入字符串转为拼音，转换过程中会使用之前设置的用户词典，以字符为单位插入分隔符
+     *
+     * 例: "hello:中国"  在separator为","时，输出： "h,e,l,l,o,:,ZHONG,GUO,!"
+     *
+     * @param str  输入字符串
+     * @param separator 分隔符
+     * @return 中文转为拼音的字符串
+     */
+    public static String toPinyin(String str, String separator) {
+        return Engine.toPinyin(str, mTrieDict, mPinyinDicts, separator, mSelector);
+    }
+
+    /**
+     * 将输入字符转为拼音
+     *
+     * @param c 输入字符
+     * @return return pinyin if c is chinese in uppercase, String.valueOf(c) otherwise.
      */
     public static String toPinyin(char c) {
         if (isChinese(c)) {
@@ -25,7 +97,10 @@ public final class Pinyin {
     }
 
     /**
-     * return whether c is chinese
+     * 判断输入字符是否为汉字
+     *
+     * @param c 输入字符
+     * @return return whether c is chinese
      */
     public static boolean isChinese(char c) {
         return (PinyinData.MIN_VALUE <= c && c <= PinyinData.MAX_VALUE
@@ -58,5 +133,50 @@ public final class Pinyin {
             realIndex = (short) (realIndex | PinyinData.PADDING_MASK);
         }
         return realIndex;
+    }
+
+    public static final class Config {
+
+        SegmentationSelector mSelector;
+
+        List<PinyinDict> mPinyinDicts;
+
+        private Config(List<PinyinDict> dicts) {
+            if (dicts != null) {
+                mPinyinDicts = new ArrayList<PinyinDict>(dicts);
+            }
+
+            mSelector = new ForwardLongestSelector();
+        }
+
+        /**
+         * 添加字典
+         *
+         * @param dict 字典
+         * @return 返回Config对象，支持继续添加字典
+         */
+        public Config with(PinyinDict dict) {
+            if (dict != null) {
+                if (mPinyinDicts == null) {
+                    mPinyinDicts = new ArrayList<PinyinDict>();
+                    mPinyinDicts.add(dict);
+                } else if (!mPinyinDicts.contains(dict)) {
+                    mPinyinDicts.add(dict);
+                }
+            }
+            return this;
+        }
+
+        boolean valid() {
+            return getPinyinDicts() != null && getSelector() != null;
+        }
+
+        SegmentationSelector getSelector() {
+            return mSelector;
+        }
+
+        List<PinyinDict> getPinyinDicts() {
+            return mPinyinDicts;
+        }
     }
 }
