@@ -28,7 +28,8 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.github.promeg:tinypinyin-lexicons-android-cncity:' + rootProject.ext.releaseVersionName
+
+    implementation project(':tinypinyin-lexicons-android-cncity')
 
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
 
