@@ -14,19 +14,26 @@ buildscript {
         maven {
             url "https://plugins.gradle.org/m2/"
         }
+        google()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:3.5.3'
     }
 
 }
+
+javadoc {
+    options.encoding = 'UTF-8'
+}
+
 
 def isTravis = "true".equals(System.getenv("TRAVIS"))
 
 android {
     compileSdkVersion rootProject.ext.androidCompileSdkVersion
     buildToolsVersion rootProject.ext.androidBuildToolsVersion
+    testOptions.unitTests.includeAndroidResources = true
 
     defaultConfig {
         minSdkVersion rootProject.ext.androidMinSdkVersion
@@ -52,25 +59,50 @@ android {
         }
     }
 
+    testOptions {
+        unitTests.all {
+            systemProperty 'robolectric.dependency.repo.url', 'https://repo1.maven.org/maven2'
+        }
+    }
+
     if (isTravis) {
         lintOptions {
             abortOnError false
         }
     }
+
+    sourceSets {
+        String sharedTestJavaDir = 'src/sharedTest/java'
+
+        test {
+            java.srcDirs += [sharedTestJavaDir]
+        }
+        androidTest {
+            java.srcDirs += [sharedTestJavaDir]
+            resources.srcDirs += ['src/test/resources']
+        }
+    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'com.github.promeg:tinypinyin-android-asset-lexicons:' + rootProject.ext.releaseVersionName
+    implementation 'com.github.promeg:tinypinyin-android-asset-lexicons:' + rootProject.ext.releaseVersionName
 
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation project(':tinypinyin-android-asset-lexicons')
+
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.robolectric:robolectric:3.1.4'
-    testCompile 'org.mockito:mockito-core:2.0.71-beta'
-    testCompile 'org.unitils:unitils-core:3.4.2'
-    testCompile 'org.hamcrest:hamcrest-all:1.3'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.robolectric:robolectric:4.3'
+    testImplementation 'org.mockito:mockito-core:2.0.71-beta'
+    testImplementation 'org.unitils:unitils-core:3.4.2'
+    testImplementation 'org.hamcrest:hamcrest-all:1.3'
+}
+
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
 }

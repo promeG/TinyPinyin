@@ -4,7 +4,15 @@ apply plugin: 'java'
 apply plugin: 'me.champeau.gradle.jmh'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
-apply from: '../config/quality-java.gradle'
+//apply from: '../config/quality-java.gradle'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+}
 
 group = rootProject.ext.groupName
 version = rootProject.ext.releaseVersionName
@@ -19,7 +27,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "me.champeau.gradle:jmh-gradle-plugin:0.3.1"
+        classpath "me.champeau.gradle:jmh-gradle-plugin:0.4.8"
         classpath 'org.apache.ant:ant:1.9.7'
     }
 
@@ -93,6 +101,8 @@ dependencies {
     jmh 'org.openjdk.jmh:jmh-core:1.3.3'
     jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.3.3'
 }
+
+
 
 // custom tasks for creating source/javadoc jars
 task sourcesJar(type: Jar, dependsOn: classes) {

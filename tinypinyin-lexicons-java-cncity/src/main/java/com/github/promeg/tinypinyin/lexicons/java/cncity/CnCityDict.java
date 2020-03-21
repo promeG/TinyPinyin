@@ -46,7 +46,7 @@ public final class CnCityDict extends PinyinMapDict {
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 
             InputStream is = classloader.getResourceAsStream("tinypinyin/cncity.txt");
-            reader = new BufferedReader(new InputStreamReader(is));
+            reader = new BufferedReader(new InputStreamReader(is, "utf-8"));
             String line;
             while ((line = reader.readLine()) != null) {
                 // process the line.

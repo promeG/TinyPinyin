@@ -4,9 +4,10 @@ buildscript {
         maven {
             url "https://plugins.gradle.org/m2/"
         }
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:3.5.3'
 
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.1"
@@ -18,8 +19,10 @@ allprojects {
     repositories {
         jcenter()
         mavenLocal()
+        google()
     }
 }
+
 
 ext {
     userName = 'PromeG'

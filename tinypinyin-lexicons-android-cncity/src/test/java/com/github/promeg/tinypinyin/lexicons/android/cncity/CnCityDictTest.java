@@ -19,7 +19,7 @@ import static org.hamcrest.core.Is.is;
  */
 //CHECKSTYLE:OFF
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 23, constants = BuildConfig.class, application = TestApp.class)
+@Config(sdk = 23, application = TestApp.class)
 public class CnCityDictTest {
     CnCityDict mDict;
 

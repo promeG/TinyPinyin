@@ -46,7 +46,7 @@ public abstract class AndroidAssetDict extends PinyinMapDict {
     private void init() {
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(mContext.getAssets().open(assetFileName())));
+            reader = new BufferedReader(new InputStreamReader(mContext.getAssets().open(assetFileName()), "utf-8"));
             String line;
             while ((line = reader.readLine()) != null) {
                 // process the line.
