@@ -7,6 +7,8 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -25,6 +27,15 @@ import static org.hamcrest.core.IsEqual.equalTo;
  * Created by guyacong on 2015/9/28.
  */
 public class PinyinTest {
+
+    @Before
+    public void setUp() throws Exception {
+        Pinyin.init(null);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+    }
 
     @Test
     public void init_with_null() throws Exception {
@@ -428,6 +439,34 @@ public class PinyinTest {
         for (char c : TraditionalCharSet.All) {
             assertThat(Pinyin.isChinese(c), is(true));
         }
+    }
+
+    @Test
+    public void testToPinyin_custom_rules_1() throws BadHanyuPinyinOutputFormatCombination {
+        assertThat(Pinyin.toPinyin('嗯'), is("NG"));
+        assertThat(Pinyin.toPinyin('嗯', new PinyinRules().add('嗯', "EN")), is("EN"));
+    }
+
+    @Test
+    public void testToPinyin_custom_rules_2() throws BadHanyuPinyinOutputFormatCombination {
+        assertThat(Pinyin.toPinyin("长春", ""), is("ZHANGCHUN"));
+        assertThat(Pinyin.toPinyin("长春", "", new PinyinRules().add("长春", "CHANGCHUN")), is("CHANGCHUN"));
+    }
+
+    @Test
+    public void testToPinyin_custom_rules_3() throws BadHanyuPinyinOutputFormatCombination {
+        Pinyin.init(Pinyin.newConfig()
+                .with(new PinyinMapDict() {
+                    @Override
+                    public Map<String, String[]> mapping() {
+                        Map<String, String[]> map = new HashMap<String, String[]>();
+                        map.put("重庆", new String[]{"NOT", "MATCH"});
+                        return map;
+                    }
+                }));
+
+        assertThat(Pinyin.toPinyin("重庆", ""), is("NOTMATCH"));
+        assertThat(Pinyin.toPinyin("重庆", "", new PinyinRules().add("重庆", "CHONGQING")), is("CHONGQING"));
     }
 
     private static char[] allChars() {

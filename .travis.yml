@@ -44,3 +44,6 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
+
+before_install:
+  - yes | sdkmanager "platforms;android-28"

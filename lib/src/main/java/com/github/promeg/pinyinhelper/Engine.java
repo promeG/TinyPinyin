@@ -22,6 +22,14 @@ final class Engine {
         //no instance
     }
 
+    static String toPinyin(final String inputStr, Pinyin.Config config, String separator) {
+        List<PinyinDict> pinyinDicts = Collections.unmodifiableList(config.getPinyinDicts());
+        Trie trie = Utils.dictsToTrie(config.getPinyinDicts());
+        SegmentationSelector selector = config.getSelector();
+
+        return toPinyin(inputStr, trie, pinyinDicts, separator, selector);
+    }
+
     static String toPinyin(final String inputStr, final Trie trie, final  List<PinyinDict> pinyinDictList,
             final String separator, final SegmentationSelector selector) {
         if (inputStr == null || inputStr.length() == 0) {

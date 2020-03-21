@@ -122,7 +122,7 @@ buildscript {
 采用以下命令运行benchmark：
 
 ```groovy
-./gradlew :lib:jmhFixed
+./gradlew jmh
 ```
 
 生成的报告在 pinyinhelper/build/reports/jmh/ 中。

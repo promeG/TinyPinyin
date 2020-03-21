@@ -20,6 +20,7 @@ version = rootProject.ext.releaseVersionName
 buildscript {
     repositories {
         mavenLocal()
+        mavenCentral()
         jcenter()
         maven {
             url "https://plugins.gradle.org/m2/"
@@ -27,7 +28,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "me.champeau.gradle:jmh-gradle-plugin:0.4.8"
+        classpath "me.champeau.gradle:jmh-gradle-plugin:0.5.0"
         classpath 'org.apache.ant:ant:1.9.7'
     }
 
@@ -37,69 +38,32 @@ sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
 jmh {
-    jmhVersion = '1.3.3'
-    include = ['*.PinyinDictBenchmark.*']
+    jmhVersion = '1.21'
+    include = ['PinyinDictBenchmark.*', 'PinyinSampleBenchmark.*']
     operationsPerInvocation = 10
     benchmarkMode = ['thrpt']
     verbosity = 'NORMAL'
     fork = 2
     timeUnit = 'us'
     duplicateClassesStrategy = 'warn'
-}
-
-configurations {
-    jmh
-}
-
-sourceSets {
-    jmh
-}
-
-project.sourceSets.jmh {
-    compileClasspath += project.configurations.jmh + project.sourceSets.main.output
-    runtimeClasspath += project.configurations.jmh + project.sourceSets.main.output
-}
-
-task jmhJarFixed(type: Jar, dependsOn: jmhClasses) {
-    doFirst {
-        from (project.configurations.jmh.collect {it.isDirectory() ? it : project.zipTree(it)}) {
-            exclude '**/META-INF/services/**'
-            exclude '**/META-INF/*.SF'
-            exclude '**/META-INF/*.DSA'
-            exclude '**/META-INF/*.RSA'
-        }
-        from project.sourceSets.jmh.output
-        from project.sourceSets.main.output
-        duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-    }
-
-    manifest {
-        attributes 'Main-Class':'org.openjdk.jmh.Main'
-    }
-
-    classifier = 'jmh'
-}
-
-task jmhFixed(type: JavaExec, dependsOn: jmhJarFixed) {
-    main = 'org.openjdk.jmh.Main'
-    classpath = project.files(project.jmhJar.archivePath) + project.sourceSets.main.runtimeClasspath
+    jvmArgs = ['-Djmh.separateClasspathJAR=true']
 }
 
 
 dependencies {
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.hamcrest:hamcrest-all:1.3'
-    testCompile 'org.assertj:assertj-core:1.7.1'
-    testCompile 'org.mockito:mockito-core:1.10.19'
-    testCompile 'com.belerweb:pinyin4j:2.5.0'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.hamcrest:hamcrest-all:1.3'
+    testImplementation 'org.assertj:assertj-core:1.7.1'
+    testImplementation 'org.mockito:mockito-core:1.10.19'
+    testImplementation 'com.belerweb:pinyin4j:2.5.0'
 
-    compile 'org.ahocorasick:ahocorasick:0.3.0'
+    implementation 'org.ahocorasick:ahocorasick:0.3.0'
 
     jmh fileTree(dir: 'jmh-libs', include: ['*.jar'])
     jmh 'org.apache.commons:commons-lang3:3.0'
     jmh 'com.belerweb:pinyin4j:2.5.0'
-    jmh 'org.openjdk.jmh:jmh-core:1.3.3'
-    jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.3.3'
+    jmh 'org.openjdk.jmh:jmh-core:0.9'
+    jmh 'org.openjdk.jmh:jmh-generator-annprocess:0.9'
 }
 
 

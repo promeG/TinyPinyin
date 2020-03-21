@@ -78,6 +78,32 @@ public final class Pinyin {
         return Engine.toPinyin(str, mTrieDict, mPinyinDicts, separator, mSelector);
     }
 
+
+    /**
+     * 将输入字符串转为拼音，转换过程中会使用之前设置的用户词典，以字符为单位插入分隔符
+     *
+     * 例: "hello:中国!"  在separator为","时，输出： "h,e,l,l,o,:,ZHONG,GUO,!"
+     *
+     * @param str  输入字符串
+     * @param separator 分隔符
+     * @param rules 自定义的规则，具有最高优先级
+     * @return 中文转为拼音的字符串
+     */
+    public static String toPinyin(String str, String separator, PinyinRules rules) {
+        if (rules != null) {
+            List<PinyinDict> dicts = new ArrayList();
+            dicts.add(rules.toPinyinMapDict());
+            if (mPinyinDicts != null) {
+                dicts.addAll(mPinyinDicts);
+            }
+            Config config = new Config(dicts);
+
+            return Engine.toPinyin(str, config, separator);
+        } else {
+            return toPinyin(str, separator);
+        }
+    }
+
     /**
      * 将输入字符转为拼音
      *
@@ -93,6 +119,21 @@ public final class Pinyin {
             }
         } else {
             return String.valueOf(c);
+        }
+    }
+
+    /**
+     * 将输入字符转为拼音
+     *
+     * @param c 输入字符
+     * @param rules 自定义规则，具有最高优先级
+     * @return return pinyin if c is chinese in uppercase, String.valueOf(c) otherwise.
+     */
+    public static String toPinyin(char c, PinyinRules rules) {
+        if (rules != null && rules.toPinyin(c) != null) {
+            return rules.toPinyin(c);
+        } else {
+            return toPinyin(c);
         }
     }
 

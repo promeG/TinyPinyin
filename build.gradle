@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         jcenter()
+        mavenCentral()
         maven {
             url "https://plugins.gradle.org/m2/"
         }
@@ -18,6 +19,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        mavenCentral()
         mavenLocal()
         google()
     }
@@ -43,8 +45,8 @@ ext {
 
 
     groupName = 'com.github.promeg'
-    releaseVersionName = "2.0.3"
-    releaseVersionCode = 5
+    releaseVersionName = "3.0.0"
+    releaseVersionCode = 6
 
     // Android
     androidBuildToolsVersion = '24.0.3'
