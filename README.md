@@ -1,7 +1,5 @@
 # TinyPinyin
 
- [![Build Status](https://travis-ci.org/promeG/TinyPinyin.svg?branch=master)](https://travis-ci.org/promeG/TinyPinyin)
-
 适用于Java和Android的快速、低内存占用的汉字转拼音库。
 
 当前稳定版本：2.0.3
@@ -15,11 +13,11 @@
 
 ## 原理介绍
 
-[打造最好的Java拼音库TinyPinyin（一）：单字符转拼音的极致优化](http://promeg.io/2017/03/18/tinypinyin-part-1/)
+[打造最好的Java拼音库TinyPinyin（一）：单字符转拼音的极致优化](https://github.com/promeG/promeg.github.io/blob/master/_posts/2017-03-19-tinypinyin-part-1.markdown)
 
-[打造最好的Java拼音库TinyPinyin（二）：多音字快速处理方案](http://promeg.io/2017/03/20/tinypinyin-part-2/)
+[打造最好的Java拼音库TinyPinyin（二）：多音字快速处理方案](https://github.com/promeG/promeg.github.io/blob/master/_posts/2017-03-20-tinypinyin-part-2.markdown)
 
-[打造最好的Java拼音库TinyPinyin（三）：API设计和测试实践](http://promeg.io/2017/03/22/tinypinyin-part-3/)
+[打造最好的Java拼音库TinyPinyin（三）：API设计和测试实践](https://github.com/promeG/promeg.github.io/blob/master/_posts/2017-03-22-tinypinyin-part-3.markdown)
 
 ## 使用
 
@@ -65,7 +63,10 @@ Pinyin.init(Pinyin.newConfig()
 ```groovy
 buildscript {
   repositories {
-    jcenter()
+    maven {
+      url 'https://maven.aliyun.com/repository/public'
+    }
+    mavenCentral()
   }
 
   dependencies {
